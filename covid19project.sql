@@ -19,6 +19,7 @@ order by 1,2
 
 --The likelihood of dying if you contract covid-19 in your country
 
+
 Select Location, date, total_cases, total_deaths, (CONVERT(float,total_deaths)/NULLIF(CONVERT(float,total_cases), 0)) * 100 as DeathPercentage
 From CovidPortfolioProject..CovidDeaths$
 where continent is not null
@@ -36,11 +37,22 @@ order by 1,2
 
 --Exploring the countries with highest infection rate to the population
 
+--3.
+
 Select Location, Population, MAX(total_cases) as HighestInfectionCount, MAX((total_cases/population)) * 100 as PercentPopulationInfected
 From CovidPortfolioProject..CovidDeaths$
 --where location like '%Nigeria%'
 where continent is not null
 Group by Location, Population
+order by PercentPopulationInfected desc
+
+--4.
+
+Select Location, Population, date, MAX(total_cases) as HighestInfectionCount, MAX((total_cases/population)) * 100 as PercentPopulationInfected
+From CovidPortfolioProject..CovidDeaths$
+--where location like '%Nigeria%'
+where continent is not null
+Group by Location, Population, date
 order by PercentPopulationInfected desc
 
 --The countries with the highest death count per population
@@ -56,10 +68,13 @@ order by TotaldeathCount desc
 
 --The continent with highest death per population
 
+--2.
+
 Select continent, MAX(cast(total_deaths as int)) as TotaldeathCount
 from CovidPortfolioProject..CovidDeaths$
 --where location like '%Africa%'
 where continent is  not null
+and location not in ('World', 'European Union', 'International')
 Group by continent
 order by TotaldeathCount desc
 
@@ -73,6 +88,8 @@ From CovidPortfolioProject..CovidDeaths$
 where continent is not null
 Group by date
 order by 1,2
+
+--1.
 
 Select SUM(new_cases) as total_cases, SUM(new_deaths) as total_deaths, SUM(new_deaths)/NULLIF (SUM(new_cases), 0)*100 as DeathPercentage
 From CovidPortfolioProject..CovidDeaths$
